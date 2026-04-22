@@ -32,7 +32,7 @@ def _safe_name(category: str) -> str:
 
 def _get_job_id(job: dict) -> str:
     """공고 dict에서 고유 ID를 추출. 없으면 회사명+직함으로 합성."""
-    for key in ("id", "jobId", "job_id"):
+    for key in ("id", "publicId", "jobId", "job_id"):
         if val := job.get(key):
             return str(val)
     company = (
@@ -149,11 +149,13 @@ async def run_category(category: str, force: bool = False) -> None:
         ]
         await asyncio.gather(*tasks)
 
-    success = _load_cached_ids(cache_path) - cached_ids
-    failed_count = len(remaining) - len(success)
+    # 라인 수 기준 집계 (job_id 빈값 문제 우회)
+    lines_after = sum(1 for l in cache_path.read_text(encoding="utf-8").splitlines() if l.strip())
+    success_count = lines_after - len(cached_ids)
+    failed_count = len(remaining) - success_count
     print(
         f"[pass1] {category} 완료: "
-        f"성공 {len(success)}건 / 실패 {failed_count}건"
+        f"성공 {success_count}건 / 실패 {failed_count}건"
         + (f" → {failed_path.name}" if failed_count else "")
     )
 

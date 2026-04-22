@@ -79,11 +79,21 @@ CATEGORIES: dict[str, list[str]] = {
 
 # 압축 시 보존할 필드 (한/영 혼용 대응)
 KEEP_FIELDS = [
-    "id", "title", "name", "position", "company", "companyName", "company_name",
-    "department", "category", "tags", "skills", "techStack", "tech_stack",
-    "description", "requirements", "qualifications", "preferred",
-    "salary", "location", "deadline", "employmentType", "careerLevel",
-    "url", "link", "applyUrl",
+    # 식별자
+    "id", "publicId", "jobId", "job_id",
+    # 기본 정보
+    "title", "name", "position", "company", "companyName", "company_name",
+    "department", "category", "categories", "tags",
+    # 직무 내용
+    "job", "jobType", "description", "requirements", "qualifications", "preferred",
+    "skills", "techStack", "tech_stack",
+    # 경력/고용
+    "experienceLevel", "careerLevel", "employmentType",
+    "minExperience", "maxExperience",
+    # 브랜드/지역
+    "brands", "salesBrand", "salesCountries", "location",
+    # 기타
+    "salary", "deadline", "url", "link", "applyUrl",
     # 한국어 키
     "제목", "회사", "회사명", "직무", "포지션", "부서", "카테고리",
     "태그", "기술스택", "설명", "자격요건", "우대사항", "연봉",
