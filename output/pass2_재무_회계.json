@@ -1,0 +1,63 @@
+{
+  "jtbd_clusters": [
+    {
+      "pattern": "결산 및 재무제표 작성·관리",
+      "count": 7,
+      "outsource_argument": "7건의 모든 공고가 결산·재무제표 등 핵심 재무 관리의 상시 수행을 요구하여, 연속성과 내부 검증이 중요한 직무로 밝혀졌습니다."
+    },
+    {
+      "pattern": "재무 전략 수립 및 의사결정 지원",
+      "count": 4,
+      "outsource_argument": "4건에서 연간 예산, 재무 전략, 투자사 대응 등 경영 의사결정 밀착형 과업이 강조되며, 정교한 내부 커뮤니케이션이 필수적임이 드러났습니다."
+    },
+    {
+      "pattern": "재무·회계 시스템 구축 및 운영 프로세스 개선",
+      "count": 3,
+      "outsource_argument": "재무회계 시스템 구축 및 고도화, ERP/프로세스 설계 등 3건은 데이터 품질관리와 프로세스 일관성이 관리포인트로, 인하우스 우위가 명확합니다."
+    }
+  ],
+  "pitch_to_hr": [
+    {
+      "claim": "이 카테고리의 7건 중 100%가 결산·재무제표 관리 등 상시 업무(운영)를 요구하며, 외주 전환에 구조적 제약이 큽니다.",
+      "evidence": "총 7건의 공고 전체가 task_nature=operation이었고, outsource_fit=high 사례가 한 건도 없음(0.0%).",
+      "strength": "강"
+    },
+    {
+      "claim": "재무 전략 및 의사결정 지원, 시스템 구축 등 핵심 경영 밀착형 과업이 외주로 대체되기 어렵다는 이용 패턴이 확실히 드러납니다.",
+      "evidence": "outsource_fit=low가 7건 전부를 차지하며, 모든 공고에서 상시 내부 조율과 경영 참여의 필요성이 repeatedly 명시됨.",
+      "strength": "강"
+    }
+  ],
+  "individual_targets": [
+    {
+      "company": "더파운더즈",
+      "unique_need": "본사 및 국내·해외 자회사 결산 수행, 결산 프로세스 설계와 자회사 ERP 전환 지원",
+      "inferred_why": "자회사 결산과 ERP 전환 등 절차상 연속성·정확성을 필요로 하며, 상시 내부 조율이 업무 필수로 제시됨.",
+      "suggested_approach": "자회사 결산 및 ERP 전환 관련 현업 노하우 지속교류를 통해 프로세스 컨설팅 위주 정보 전달을 모색."
+    },
+    {
+      "company": "딥포인트",
+      "unique_need": "전사 재무 전략 수립, 자금 운영, 대내외 투자자·이해관계자 커뮤니케이션",
+      "inferred_why": "CFO 직군 특성상 경영 전략과 연동되는 의사결정 지원이기 때문에 상시 내부 컨트롤을 강조.",
+      "suggested_approach": "경영전략과 자금 흐름 최적화를 위한 워크숍·벤치마킹 자료 등 인사이트를 공유하는 맞춤형 어프로치 제안."
+    },
+    {
+      "company": "글루가",
+      "unique_need": "K-IFRS 기준 연결재무제표 작성과 연결조정, 자회사 결산 패키지·데이터 정합성 관리",
+      "inferred_why": "연결결산 등 고도의 데이터 통합·검증이 요구되며 그룹 단위 내 상시 협업이 업무의 핵심.",
+      "suggested_approach": "K-IFRS 연결 데이터 관리·자동화 툴 트렌드와 조직 내 사례 중심 자료 리포트 제공 제안."
+    }
+  ],
+  "ax_ai_intel": {
+    "keywords": [],
+    "automation_intent": null,
+    "kmong_service_fit": null,
+    "individual_cases": []
+  },
+  "education_themes": [],
+  "market_signal": "'재무_회계' 카테고리 전체 7건 중 0.0%만이 외주 적합(high)으로 평가되어, 본 시장은 인하우스 채용에 절대적으로 집중되어 있습니다.",
+  "category": "재무_회계",
+  "n_jobs": 7,
+  "high_outsource_ratio": 0.0,
+  "n_with_ax_mention": 0
+}

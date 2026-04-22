@@ -1,0 +1,90 @@
+{
+  "jtbd_clusters": [
+    {
+      "pattern": "기획·제작",
+      "count": 7,
+      "outsource_argument": "7건의 모든 공고에서 브랜드 목적에 따라 영상 콘텐츠의 기획과 제작을 전담하거나, 브랜드/제품의 소구 포인트 설계가 핵심 과업으로 반복됩니다. 독립 산출물 위주의 '기획·제작'은 프로젝트화를 전제로 할 수 있어 외주 전환이 용이합니다."
+    },
+    {
+      "pattern": "운영·관리",
+      "count": 5,
+      "outsource_argument": "5건에서 프로젝트 일정·외부 인력 협업, 예산 집행, 촬영 일정 관리 등 영상 콘텐츠 운영·관리 과업이 주요하게 드러납니다. 반복적이고 산출물 단위 또는 정기 관리형 작업은 효율적인 외부 리소스 활용으로 부담을 줄일 수 있습니다."
+    },
+    {
+      "pattern": "분석·리포팅",
+      "count": 4,
+      "outsource_argument": "4건에서 ROAS, 콘텐츠 성과 지표, CTR 등 구체적 데이터 분석 및 리포트 작성이 나타나며, 이는 전문 외부 인력을 통해 정량 기준에 따라 단기 위임이 가능합니다."
+    }
+  ],
+  "pitch_to_hr": [
+    {
+      "claim": "영상 콘텐츠의 14.3%는 프로젝트 분리형(high outsource fit)으로, 기간·산출물이 명확한 과업은 외부 전문가 위탁이 적합합니다.",
+      "evidence": "총 7건 중 1건(14.3%)이 outsource_fit=high, task_nature=project로 분류됨.",
+      "strength": "강"
+    },
+    {
+      "claim": "7건의 영상 공고 중 5건이 운영·관리·분석 등 반복성 업무로, 인건비와 퀄리티 관리 측면에서 외주 기여도가 높습니다.",
+      "evidence": "task_nature=mixed 또는 operation이 6건(85.7%), jtbd_clusters 중 '운영·관리', '분석·리포팅'이 합산 9회 이상 언급됨.",
+      "strength": "중"
+    }
+  ],
+  "individual_targets": [
+    {
+      "company": "제이맥",
+      "unique_need": "촬영 감독의 독립 프로젝트 단위 산출(브랜드 비주얼 아이덴티티 영상, 숏폼/인플루언서 협업 물, 색보정 등 후반작업 등).",
+      "inferred_why": "프로젝트별로 기간, 산출물 범위가 명확하여 외부 전문가 활용시 즉시 적용 및 예산 통제 가능.",
+      "suggested_approach": "독립적인 브랜드 캠페인/제품 영상 제작을 정액 또는 마일스톤 단위 단기 계약으로 제안."
+    },
+    {
+      "company": "에이지엣랩스",
+      "unique_need": "콘텐츠 제작 주도, 외부 제작 인력 활용 경험, 성과 분석 및 리포트 중심의 프로젝트 관리.",
+      "inferred_why": "성과 지표 분석, 외부 인력 협업 등 부분 간접 외주 프로세스에 익숙한 조직으로, ROI 중심 단기 외주 활용에 우호적.",
+      "suggested_approach": "성과 기반 분절형 업무(예: 영상 리포트/분석, 캠페인별 영상물 등)를 위탁받아 직접 산출물로 제공하는 모델을 제안."
+    },
+    {
+      "company": "올릿",
+      "unique_need": "자사 브랜드 상품군별 영상 기획·촬영·편집에서 PD 팀 리딩, 외부 스튜디오·크리에이터 조율 등 복합 과업.",
+      "inferred_why": "상시 팀 내 부분 외주 마련 경험과 프로젝트(신제품 등)성 과업이 혼재되어 있으며, 필요시 전문 외부 인력 투입이 유연함.",
+      "suggested_approach": "특정 신제품 캠페인 또는 플랫폼별(유튜브/숏폼) 시리즈 단위 외주 기획 및 제작을 임팩트 있게 제안."
+    }
+  ],
+  "ax_ai_intel": {
+    "keywords": [
+      "AI 영상 툴",
+      "AI 도구 활용"
+    ],
+    "automation_intent": null,
+    "kmong_service_fit": "SNS콘텐츠기획",
+    "individual_cases": [
+      {
+        "company": "올릿",
+        "role_title": "콘텐츠 PD 리더 (뷰티)",
+        "what_they_want": "자사 뷰티 브랜드의 영상 콘텐츠 기획·제작 프로세스에서 AI 영상 툴을 활용하려는 요구.",
+        "quote": "AI 영상 툴",
+        "kmong_angle": "SNS콘텐츠기획"
+      },
+      {
+        "company": "에이지엣랩스",
+        "role_title": "콘텐츠 PD",
+        "what_they_want": "콘텐츠 제작과 리포트 업무에 AI 도구 활용이 가능한 지원자 선호.",
+        "quote": "AI 도구 활용",
+        "kmong_angle": null
+      }
+    ]
+  },
+  "education_themes": [
+    {
+      "topic": "AI 영상 툴 실전 활용법",
+      "rationale": "실제 PD직 JD에서 'AI 영상 툴' 언급이 있어, 현업 영상/콘텐츠 담당자들의 실무 관심이 확인됩니다."
+    },
+    {
+      "topic": "성과 분석 기반 영상 캠페인 만들기",
+      "rationale": "콘텐츠 성과 지표 분석·리포팅이 반복적으로 요구되어 데이터 기반 영상 기획·운영이 중요합니다."
+    }
+  ],
+  "market_signal": "영상 콘텐츠 채용 중 14.3%는 명확한 프로젝트 단위 외주 적합(high fit)이고, 28.6%는 AI 활용 역량을 기대합니다.",
+  "category": "콘텐츠_영상",
+  "n_jobs": 7,
+  "high_outsource_ratio": 0.143,
+  "n_with_ax_mention": 2
+}

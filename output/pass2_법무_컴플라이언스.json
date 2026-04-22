@@ -1,0 +1,39 @@
+{
+  "jtbd_clusters": [
+    {
+      "pattern": "계약·법률 검토 및 자문",
+      "count": 2,
+      "outsource_argument": "계약서·법률 검토 및 자문은 기업 내부 사정과 연동된 의사결정이 많아 인하우스가 선호됩니다. 외부 위임 시 상시 커뮤니케이션 지연 및 리스크가 큽니다."
+    },
+    {
+      "pattern": "IP 출원·관리 및 분쟁 대응",
+      "count": 2,
+      "outsource_argument": "IP 및 분쟁 대응은 통상적 절차보다는 즉각적, 상황맞춤 조치가 중요해 사내 담당자의 상시 대응이 요구됩니다."
+    },
+    {
+      "pattern": "사내 교육·이슈발굴 및 계열사 관리",
+      "count": 2,
+      "outsource_argument": "사내 교육, 이슈관리, 계열사 지원은 기업 내부 맥락 이해와 조율역량이 더 우선적인 성격입니다."
+    }
+  ],
+  "pitch_to_hr": [
+    {
+      "claim": "법무_컴플라이언스 채용 공고 2건 모두 outsource_fit=low로 기업 내 상시 법무관리·조율 필요성이 강조되고 있습니다.",
+      "evidence": "총 2건 중 outsource_fit=high 0건(0.0%), 모두 task_nature=mixed에서 내부 기능이 더 중요하다고 명시.",
+      "strength": "강"
+    }
+  ],
+  "individual_targets": [],
+  "ax_ai_intel": {
+    "keywords": [],
+    "automation_intent": null,
+    "kmong_service_fit": null,
+    "individual_cases": []
+  },
+  "education_themes": [],
+  "market_signal": "법무_컴플라이언스 직군은 최근 채용공고 2건 모두 outsource_fit=high 비율이 0.0%로, 외주화에 대한 수요가 극히 낮은 카테고리입니다.",
+  "category": "법무_컴플라이언스",
+  "n_jobs": 2,
+  "high_outsource_ratio": 0.0,
+  "n_with_ax_mention": 0
+}

@@ -1,0 +1,140 @@
+{
+  "jtbd_clusters": [
+    {
+      "pattern": "콘텐츠/디자인 기획·제작 및 시각화",
+      "count": 17,
+      "outsource_argument": "콘텐츠 기획·제작, 패키지 및 BX 디자인 등 시각물 중심 업무는 17건에서 반복적으로 등장하며, Adobe/Illustrator 등 툴 활용 기반의 프로젝트들이 다수입니다. 단기간 완성, 결과물 중심인 만큼 프리랜서나 전문 외주팀을 통한 빠른 납기·완성 보장이 가능합니다."
+    },
+    {
+      "pattern": "프로모션/마케팅 기획·운영",
+      "count": 11,
+      "outsource_argument": "프로모션 기획, 온/오프라인 캠페인 실행, 퍼포먼스 분석 등은 11건에서 확인됩니다. 실행력과 시장 적응력, 데이터 기반 인사이트가 필요해, 유연한 외주 파트너 활용 시 시즌별/이벤트별 빠른 대응이 용이합니다."
+    },
+    {
+      "pattern": "채널/자사몰 운영 및 관리",
+      "count": 9,
+      "outsource_argument": "자사몰·브랜드몰·해외 유통 채널의 운영·관리 업무(9건)는 반복되는 오퍼레이션 또는 특정 행사·출시 시기에 집중되는 경향이 있어, 특정 구간 크라우드소싱 등 외주 전환을 통해 인력 부담과 비용을 조정할 수 있습니다."
+    },
+    {
+      "pattern": "인플루언서/크리에이터 협업 및 캠페인",
+      "count": 6,
+      "outsource_argument": "인플루언서 발굴, 시딩, 캠페인 협업 등 크리에이터 연계 업무 6건이 확인되며, 마이크로 타깃팅, 혁신 포맷 실험 등 높은 유연성을 요구하므로 전문 에이전시 외주 활용이 효율적입니다."
+    },
+    {
+      "pattern": "품질관리·정산·GA 등 백오피스 실무",
+      "count": 5,
+      "outsource_argument": "정산·회계·자금·품질·총무 등 백오피스 실무(5건)는 정형화된 업무 위주여서, 단기 외주 투입을 통한 결산 시즌 집중 지원, 또는 반복 관리 업무의 외부화로 효율성이 커집니다."
+    },
+    {
+      "pattern": "데이터 분석·리포팅 및 개선",
+      "count": 5,
+      "outsource_argument": "마케팅 데이터 분석, 프로모션 성과 측정 등 데이터 리포팅성 업무가 5건 확인됩니다. 수치 기반 결과물 위주로 외주화 시, 특화된 분석역량을 단기 수혈하고 내부 리소스에 부담을 덜 수 있습니다."
+    }
+  ],
+  "pitch_to_hr": [
+    {
+      "claim": "콘텐츠/디자인 관련 JTBD가 전체의 17건으로, Adobe·Illustrator 기반 시각물 프로젝트가 외부 리소스를 통한 빠른 결과물 창출에 적합합니다.",
+      "evidence": "분석한 77건 중, '콘텐츠 기획·제작 및 디자인'과 관련된 JD가 17건으로 가장 많이 반복됨. 주요 툴로 Illustrator(9건), Adobe Photoshop(8건), Figma(3건) 등이 함께 언급됨.",
+      "strength": "강"
+    },
+    {
+      "claim": "프로모션 및 캠페인 실행·분석 업무가 11건 확인돼, 이벤트성 실무는 시즌/이벤트별로 외주 활용이 시장의 요구에 부합합니다.",
+      "evidence": "프로모션·마케팅 기획 및 실행, 데이터 기반 성과분석 등이 11건에서 확인되며, 주로 mixed형 task_nature로 나타남.",
+      "strength": "중"
+    },
+    {
+      "claim": "자사몰, 브랜드몰 등 채널 운영 업무 9건은 반복성/OPEX가 높아 단기 외주나 프로젝트성 위임에 유리합니다.",
+      "evidence": "채널/자사몰 운영 및 관리 등 오퍼레이션 성향의 JD가 9건으로 집계됨. 이커머스·자사몰 관리, 상품 등록, 프로모션 운영 등이 반복적으로 등장.",
+      "strength": "중"
+    }
+  ],
+  "individual_targets": [
+    {
+      "company": "더파운더즈",
+      "unique_need": "빅모델 캠페인 전략 리서치와 북미 시장 인사이트 분석, 그리고 오프라인 유통 GTM 전략 고도화 등 브랜드 성장 프로세스 지원.",
+      "inferred_why": "캠페인 전략 기획 및 사례분석, 국내외 시장 데이터 해석이 요구되는 프로젝트형 과업이 명확히 출현하며, 단기 목표와 데이터 중심 결과물이 강조됨.",
+      "suggested_approach": "국내/북미 캠페인 전략 리서치 및 오프라인 채널 GTM 전략 고도화 등 프로젝트 단위 지원 사례를 모아, 캠페인 기획 및 오프라인 유통전략 외주 옵션을 제안합니다."
+    },
+    {
+      "company": "쑥쑥컴퍼니",
+      "unique_need": "신제품 런칭 캠페인 Key Visual 디자인과, AI 이미지 생성, Midjourney 등 최신 툴 활용한 그래픽 작업.",
+      "inferred_why": "AI 키워드(Stable Diffusion, Firefly, Midjourney)와 Key Visual 기획·제작이 반복적으로 언급되어, 테크 기반 디자인 과업이 적합함.",
+      "suggested_approach": "AI 기반 Key Visual 및 그래픽 디자인 프로젝트 서포트 협업 경험을 강조하여, AI 이미지 생성 툴을 활용하는 인력 또는 스튜디오 매칭을 제안합니다."
+    },
+    {
+      "company": "이닛컴퍼니",
+      "unique_need": "웹 및 영상 콘텐츠 디자인과, AI 툴(Midjourney, 나노바나나) 기반 이미지·영상 제작 실험.",
+      "inferred_why": "AI 기반 콘텐츠 제작, Midjourney 등 신기술 실험이 명확히 드러나, 실험적 웹/영상 디자인 외부 수혈 수요가 큼.",
+      "suggested_approach": "AI 이미지/영상 툴 기반의 웹·영상 디자인 프로젝트 포트폴리오 및 실험적 디자인 성공 사례 네트워킹을 우선적으로 제시하세요."
+    }
+  ],
+  "ax_ai_intel": {
+    "keywords": [
+      "Midjourney",
+      "AI 이미지 생성",
+      "Firefly",
+      "Stable Diffusion",
+      "AI 기반 콘텐츠 제작",
+      "AI 도구",
+      "콘텐츠 아이데이션",
+      "마케팅",
+      "퍼포먼스 마케팅",
+      "SNS 콘텐츠",
+      "나노바나나"
+    ],
+    "automation_intent": null,
+    "kmong_service_fit": "AI활용교육",
+    "individual_cases": [
+      {
+        "company": "쑥쑥컴퍼니",
+        "role_title": "[인턴] [헤트라스] Creative Director 전환형 인턴",
+        "what_they_want": "AI 이미지 생성 및 Midjourney, Firefly, Stable Diffusion 등 생성AI 툴을 활용한 신제품 캠페인 Key Visual 디자인 및 그래픽 작업 경험 확장.",
+        "quote": "\"AI 이미지 생성\", \"Midjourney\", \"Firefly\", \"Stable Diffusion\"",
+        "kmong_angle": null
+      },
+      {
+        "company": "쑥쑥컴퍼니",
+        "role_title": "[헤트라스] Creative Director",
+        "what_they_want": "AI 이미지 생성툴 등을 현장 Key Visual 작업에 실험적으로 적용하며, 신제품/오프라인 매장 등 복수 채널의 디자인 퀄리티 고도화에 관심.",
+        "quote": "\"AI 이미지 생성\", \"Midjourney\", \"Firefly\", \"Stable Diffusion\"",
+        "kmong_angle": null
+      },
+      {
+        "company": "이닛컴퍼니",
+        "role_title": "[프롬리에] 웹 디자이너 (1년 이상)",
+        "what_they_want": "AI 기반 콘텐츠 제작, Midjourney, 나노바나나 등 신기술 실험을 웹·영상 콘텐츠 디자인에 접목하여, 새로운 방식의 이미지와 영상을 시도.",
+        "quote": "\"AI 기반 콘텐츠 제작\", \"Midjourney\", \"나노바나나\"",
+        "kmong_angle": "AI활용교육"
+      },
+      {
+        "company": "에이지엣랩스",
+        "role_title": "콘텐츠 디자이너",
+        "what_they_want": "AI 도구를 활용한 콘텐츠 아이데이션 실험과 다양한 온라인 채널 디자인/제작 업무.",
+        "quote": "\"AI 도구\", \"콘텐츠 아이데이션\"",
+        "kmong_angle": "AI활용교육"
+      },
+      {
+        "company": "아이리스브라이트",
+        "role_title": "[아이리스브라이트] 대만 마케터",
+        "what_they_want": "마케팅·퍼포먼스 마케팅·SNS 콘텐츠와 관련하여 디지털·AI 마케팅 기법까지 실험적으로 접목할 의지.",
+        "quote": "\"마케팅\", \"퍼포먼스 마케팅\", \"SNS 콘텐츠\"",
+        "kmong_angle": null
+      }
+    ]
+  },
+  "education_themes": [
+    {
+      "topic": "생성AI(Midjourney, Firefly, Stable Diffusion) 기반 그래픽 디자인 실전",
+      "rationale": "쑥쑥컴퍼니, 이닛컴퍼니 등에서 Midjourney, Firefly, Stable Diffusion을 언급하며, AI 이미지 생성툴 기반 Key Visual 디자인 수요가 반복적으로 추출됨."
+    },
+    {
+      "topic": "AI 도구를 활용한 콘텐츠 아이데이션 및 영상 디자인 실습",
+      "rationale": "에이지엣랩스(콘텐츠 디자이너), 이닛컴퍼니(웹 디자이너) 등에서 AI 아이데이션 및 영상 제작 실험 수요가 명확하게 드러남."
+    }
+  ],
+  "market_signal": "77건 중 콘텐츠/디자인 기획·제작 관련 외주 적합 공고가 17건(22.1%)로, 디자인 결과물 중심의 단기 외주 수요가 기타 카테고리 전반에서 두드러집니다.",
+  "category": "기타",
+  "n_jobs": 77,
+  "high_outsource_ratio": 0.026,
+  "n_with_ax_mention": 5
+}
