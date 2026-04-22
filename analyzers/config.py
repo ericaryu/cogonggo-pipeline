@@ -16,7 +16,8 @@ PASS1_CONCURRENCY = 10
 PASS1_MAX_TOKENS = 512
 
 # Pass2 LLM 출력 최대 토큰
-PASS2_MAX_TOKENS = 2048
+# individual_cases 필드 추가로 출력량 증가 → 4096으로 상향
+PASS2_MAX_TOKENS = 4096
 
 # Pass2 컨텍스트 압축 기준 (Pass1 결과가 이 건수를 넘으면 사전 집계 후 주입)
 PASS2_SUMMARY_THRESHOLD = 50

@@ -184,6 +184,16 @@ def run_category(category: str, force: bool = False) -> Pass2Output | None:
 
     llm_out: LLMPass2Output = call_pass2(category, stats_block, jobs_block)
 
+    # individual_cases 누락 검증
+    n_ax = stats["n_with_ax_mention"]
+    n_cases = len(llm_out.ax_ai_intel.individual_cases)
+    if n_ax > 0 and n_cases < n_ax:
+        log.warning(
+            "[pass2] %s: individual_cases 누락 의심 — "
+            "n_with_ax_mention=%d, individual_cases=%d (차이 %d건)",
+            category, n_ax, n_cases, n_ax - n_cases,
+        )
+
     # LLM 생성 결과 + 러너 집계 통계 병합 → Pass2Output
     output = Pass2Output(
         **llm_out.model_dump(),
@@ -197,7 +207,10 @@ def run_category(category: str, force: bool = False) -> Pass2Output | None:
     out_path.write_text(
         output.model_dump_json(indent=2), encoding="utf-8"
     )
-    print(f"[pass2] {category}: 완료 → {out_path}")
+    print(
+        f"[pass2] {category}: 완료 → {out_path}"
+        + (f"  ⚠ individual_cases {n_cases}/{n_ax}" if n_ax > 0 and n_cases < n_ax else "")
+    )
     return output
 
 

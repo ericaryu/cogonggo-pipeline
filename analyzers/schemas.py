@@ -126,6 +126,42 @@ class Pass1Output(BaseModel):
     )
 
 
+# ── Pass2 전용 AX/AI 모델 ──────────────────────────────────────────────────────
+
+class AXAICase(BaseModel):
+    """AI/자동화 언급이 있는 개별 공고 사례. 공통점 없어도 보존."""
+
+    company: str
+    role_title: str
+    what_they_want: str = Field(
+        description="이 공고가 AI/자동화로 달성하려는 것. 공고 원문 근거 기반."
+    )
+    quote: str = Field(
+        description="공고 본문에서 AI/자동화 관련 원문 인용 1문장."
+    )
+    kmong_angle: str | None = Field(
+        description=(
+            "Kmong이 이 수요에 접근할 각도 제안. "
+            "확실한 서비스 매칭이 보이면 작성, 애매하면 null. "
+            "억지로 만들지 말 것."
+        )
+    )
+
+
+class Pass2AXAIIntel(AXAIIntel):
+    """Pass2 전용 AX/AI 요약. AXAIIntel에 개별 사례 보존 필드 추가."""
+
+    individual_cases: list[AXAICase] = Field(
+        default_factory=list,
+        description=(
+            "AI/자동화 언급이 있는 모든 개별 공고를 사례 단위로 보존. "
+            "공통점으로 묶이지 않는 1회성 사례도 반드시 포함. "
+            "automation_targets(공통 테마 클러스터)와 별개로, "
+            "독자가 개별 기업의 고유 수요를 그대로 볼 수 있게 함."
+        )
+    )
+
+
 # ── Pass2 중첩 모델 ────────────────────────────────────────────────────────────
 
 class JTBDCluster(BaseModel):
@@ -242,11 +278,12 @@ class LLMPass2Output(BaseModel):
             "outsource_fit=high이거나 AI 투자 신호가 뚜렷한 기업 우선."
         )
     )
-    ax_ai_intel: AXAIIntel = Field(
+    ax_ai_intel: Pass2AXAIIntel = Field(
         description=(
             "카테고리 전체에서 집계된 AI/자동화 신호 요약. "
             "keywords는 카테고리 내 공통 AI 키워드 상위 5개 이내. "
-            "kmong_service_fit은 카테고리 맥락에서 가장 강하게 매칭되는 단일 서비스 타입."
+            "kmong_service_fit은 카테고리 맥락에서 가장 강하게 매칭되는 단일 서비스 타입. "
+            "individual_cases는 AI/자동화 언급이 있는 공고를 사례 단위로 전부 보존."
         )
     )
     education_themes: list[EducationTheme] = Field(
