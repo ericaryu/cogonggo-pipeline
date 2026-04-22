@@ -3,14 +3,17 @@ cogonggo.co/recruit 채용공고 분석 파이프라인
 
 Usage:
     python pipeline.py                          # 전체 실행 (scrape → classify → analyze)
-    python pipeline.py --step scrape            # 1~2단계: 공고 수집
+    python pipeline.py --step scrape-list       # 목록 수집 → data/raw/jobs_raw.json
+    python pipeline.py --step scrape-detail     # 상세 수집 → data/raw/jobs_enriched.json
+    python pipeline.py --step scrape            # scrape-list + scrape-detail
     python pipeline.py --step classify          # 3단계: 카테고리 분류
     python pipeline.py --step analyze           # 4단계: Pass1 + Pass2 전체
     python pipeline.py --step analyze-pass1     # 4a단계: 공고 구조화 추출만
     python pipeline.py --step analyze-pass2     # 4b단계: 전략 분석만 (Pass1 캐시 필요)
 
-    python pipeline.py --step analyze --category 마케팅        # 특정 카테고리만
-    python pipeline.py --step analyze-pass1 --force            # 캐시 무시 재실행
+    python pipeline.py --step scrape-detail --limit 20     # 상세 테스트 (20건)
+    python pipeline.py --step analyze --category 마케팅    # 특정 카테고리만
+    python pipeline.py --step analyze-pass1 --force        # 캐시 무시 재실행
 """
 import argparse
 import asyncio
@@ -18,26 +21,45 @@ import json
 from pathlib import Path
 
 RAW_PATH = Path("data/raw/jobs_raw.json")
+ENRICHED_PATH = Path("data/raw/jobs_enriched.json")
 
 
-def run(step: str = "all", category: str | None = None, force: bool = False) -> None:
-    if step in ("scrape", "all"):
+def run(
+    step: str = "all",
+    category: str | None = None,
+    force: bool = False,
+    limit: int | None = None,
+) -> None:
+    if step in ("scrape-list", "scrape", "all"):
         print("=" * 50)
-        print("STEP 1-2: 공고 수집 (API 탐지 → 전체 수집)")
+        print("STEP 1-2: 공고 목록 수집 (API 탐지 → 전체 수집)")
         print("=" * 50)
         from scraper import scrape
         jobs = asyncio.run(scrape())
-        print(f"\n수집 완료: {len(jobs)}건\n")
+        print(f"\n목록 수집 완료: {len(jobs)}건\n")
 
-    if step in ("classify", "all"):
+    if step in ("scrape-detail", "scrape", "all"):
         if not RAW_PATH.exists():
-            print(f"[pipeline] {RAW_PATH} 없음. --step scrape 먼저 실행하세요.")
+            print(f"[pipeline] {RAW_PATH} 없음. --step scrape-list 먼저 실행하세요.")
             return
         print("=" * 50)
-        print("STEP 3: 카테고리 분류 + 압축")
+        print("STEP 2b: 공고 상세 수집 (/_next/data/…/cg/{id}.json)")
+        print("=" * 50)
+        from scraper.job_detail_scraper import run as detail_run
+        asyncio.run(detail_run(limit=limit, force=force))
+        print()
+
+    if step in ("classify", "all"):
+        # enriched 데이터가 있으면 그것을 분류 소스로 사용
+        source_path = ENRICHED_PATH if ENRICHED_PATH.exists() else RAW_PATH
+        if not source_path.exists():
+            print(f"[pipeline] {source_path} 없음. --step scrape 먼저 실행하세요.")
+            return
+        print("=" * 50)
+        print(f"STEP 3: 카테고리 분류 + 압축 (소스: {source_path.name})")
         print("=" * 50)
         from classifier import classify_and_compress
-        jobs = json.loads(RAW_PATH.read_text())
+        jobs = json.loads(source_path.read_text())
         categorized = classify_and_compress(jobs)
         total = sum(len(v) for v in categorized.values())
         print(f"\n분류 완료: {total}건 → {len(categorized)}개 카테고리\n")
@@ -76,7 +98,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="cogonggo.co 채용공고 분석 파이프라인")
     parser.add_argument(
         "--step",
-        choices=["scrape", "classify", "analyze", "analyze-pass1", "analyze-pass2", "all"],
+        choices=[
+            "scrape-list", "scrape-detail", "scrape",
+            "classify", "analyze", "analyze-pass1", "analyze-pass2", "all",
+        ],
         default="all",
         help="실행할 단계 (기본: all)",
     )
@@ -91,5 +116,12 @@ if __name__ == "__main__":
         action="store_true",
         help="캐시/출력 파일 무시하고 재실행",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        metavar="N",
+        help="상세 수집 건수 제한 (테스트용, scrape-detail 스텝에만 적용)",
+    )
     args = parser.parse_args()
-    run(step=args.step, category=args.category, force=args.force)
+    run(step=args.step, category=args.category, force=args.force, limit=args.limit)

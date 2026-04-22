@@ -85,8 +85,10 @@ KEEP_FIELDS = [
     "title", "name", "position", "company", "companyName", "company_name",
     "department", "category", "categories", "tags",
     # 직무 내용
-    "job", "jobType", "description", "requirements", "qualifications", "preferred",
+    "job", "jobType", "subJob", "description", "requirements", "qualifications", "preferred",
     "skills", "techStack", "tech_stack",
+    # 상세 페이지 필드 (job_detail_scraper 수집)
+    "positionDescription", "mainTask", "preferences", "benefits", "hiringProcess",
     # 경력/고용
     "experienceLevel", "careerLevel", "employmentType",
     "minExperience", "maxExperience",

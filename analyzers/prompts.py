@@ -12,6 +12,8 @@ PASS1_SYSTEM = """당신은 채용공고에서 외주 세일즈 논거를 추출
 ## 추출 원칙
 
 1. 원문 근거 우선
+   - positionDescription · mainTask · qualifications · preferences · benefits 필드가 있으면
+     이를 1순위 근거로 사용한다. title/company 수준 추론은 이 필드들이 없을 때만 허용.
    - 공고에 명시된 내용만 추출한다.
    - 직함이나 회사명으로 과업을 추론하지 않는다.
    - 근거가 없으면 null, 애매하면 null.
