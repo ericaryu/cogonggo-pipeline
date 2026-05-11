@@ -53,15 +53,25 @@ HEADERS = {
     "Referer": TARGET_URL,
 }
 
-DETAIL_FIELDS = ["positionDescription", "mainTask", "qualifications", "preferences", "benefits"]
+DETAIL_FIELDS = [
+    "positionDescription", "mainTask", "qualifications", "preferences", "benefits",
+    "companyName", "experienceLevel", "minExperience", "maxExperience",
+]
 JOB_KEYS = {"title", "publicid", "id", "position", "name"}
 SKIP_FRAGMENTS = [
     "analytics", "gtm", "google", "facebook", "fonts",
     ".css", ".js", ".png", ".jpg", ".svg", ".woff", "hotjar", "tally",
 ]
 OUTPUT_COLUMNS = [
-    "기업명", "포지션명", "포지션 소개", "주요업무", "자격요건", "급여 및 처우", "우대사항", "publicId", "url",
+    "기업명", "포지션명", "경력구분", "최소경력(년)", "최대경력(년)",
+    "포지션 소개", "주요업무", "자격요건", "급여 및 처우", "우대사항", "publicId", "url",
 ]
+
+EXPERIENCE_LEVEL_MAP = {
+    "new": "신입",
+    "experienced": "경력",
+    "both": "신입+경력",
+}
 
 
 # ── 텍스트 정제 ──────────────────────────────────────────────────────────────
@@ -333,9 +343,14 @@ def _to_rows(jobs: list[dict]) -> list[dict]:
     rows = []
     for job in jobs:
         pid = job.get("publicId", "")
+        min_exp = job.get("minExperience")
+        max_exp = job.get("maxExperience")
         rows.append({
             "기업명": _clean(job.get("companyName", "")),
             "포지션명": _clean(job.get("title", "")),
+            "경력구분": EXPERIENCE_LEVEL_MAP.get(job.get("experienceLevel", ""), ""),
+            "최소경력(년)": min_exp if isinstance(min_exp, int) and min_exp > 0 else "",
+            "최대경력(년)": max_exp if isinstance(max_exp, int) and 0 < max_exp < 99 else "",
             "포지션 소개": _clean(job.get("positionDescription", "")),
             "주요업무": _clean(job.get("mainTask", "")),
             "자격요건": _clean(job.get("qualifications", "")),
