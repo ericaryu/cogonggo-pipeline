@@ -48,46 +48,94 @@ TRIGGER_LABELS = {
 
 class TaskProposal(BaseModel):
     action_steps: list[str]
+    hard_step_indices: list[int]   # action_steps 중 외주 시 가장 큰 걸림돌 step의 0-based 인덱스
+    easy_step_indices: list[int]   # action_steps 중 외주 대체가 가장 쉬운 step의 0-based 인덱스
     triggers: list[Literal["채용공백", "고정비", "피크", "스킬부족"]]
     kmong_coverage: Literal["가능", "부분가능", "어려움"]
     kmong_blockers: list[str]
     kmong_approach: str
+    agency_overlap: bool           # 에이전시가 이미 이 영역을 담당하고 있을 가능성이 높은지
+    agency_differentiation: str    # agency_overlap=True 일 때: 기존 에이전시 대비 차별화 포인트 / False일 때: 빈 문자열
     proposal_headline: str
 
 
 # ── 시스템 프롬프트 ───────────────────────────────────────────────────────────
 
 SYSTEM_PROMPT = """당신은 뷰티 브랜드 마케팅 실무 전문가이자 프리랜서 플랫폼 활용 전략가입니다.
-주어진 마케팅 task에 대해 4가지를 분석합니다.
+주어진 마케팅 task에 대해 아래 항목을 분석합니다.
 
 [1] action_steps (5~10개)
 실제 이 task를 수행하는 실무자가 구체적으로 하는 일들.
-- 도구/플랫폼 이름 명시 (인스타그램, 구글 애즈, 노션, 스프레드시트 등)
-- 클릭 단위, 전송 단위로 구체화 (예: "인스타그램 릴스 탭에서 #뷰티 해시태그 검색 후 조회수 5만+ 계정 필터링")
-- 판단이 필요한 순간도 포함 (예: "팔로워 대비 댓글 비율 1% 이상인 계정만 선별")
-- 추상적 표현 금지 ("리서치 진행" → 불가, "네이버 트렌드·구글 트렌드에서 최근 3개월 검색량 확인" → 가능)
+- 도구/플랫폼 이름 명시 (인스타그램, 구글 애즈, ERP, 자사몰 관리자 페이지, 노션 등)
+- 클릭·전송·입력 단위로 구체화 (예: "구글 애즈 관리자에서 캠페인 탭 → 새 캠페인 생성 클릭")
+- 시스템 접근, 권한 필요 여부도 명시 (예: "ERP 로그인 후 재고 현황 조회")
+- 판단 필요 순간도 포함
 
-[2] triggers (해당하는 것 모두 선택)
-이 task를 외주로 전환하게 되는 트리거 상황:
-- 채용공백: 포지션 공백 중 즉시 커버 필요
-- 고정비: 경력직 채용 대신 변동비화
-- 피크: 시즌·캠페인 물량 급증 대응
-- 스킬부족: 내부에 해당 스킬 보유자 없음
+[2] hard_step_indices
+action_steps 중 외주를 줄 때 가장 큰 걸림돌이 되는 step들의 0-based 인덱스 목록.
+걸림돌 기준 (하나라도 해당하면 hard):
+- ERP, 내부 재고 시스템, 자사몰 관리자 페이지 등 사내 시스템 접근 필요
+- 브랜드 광고 계정(Meta Business Manager, 구글 애즈 등) 로그인 권한 필요
+- 고객 개인정보, 내부 매출 데이터, CRM DB 접근 필요
+- 실시간 판단·즉시 대응이 핵심인 step (예: 광고 이상 감지 즉시 중단)
+- 브랜드 전략·톤앤매너 깊은 이해 없이 불가능한 창작/판단 step
 
-[3] kmong 평가
-크몽(kmong.com, 국내 최대 프리랜서 플랫폼)에서 이 task를 실제로 발주할 수 있는지 평가:
-- kmong_coverage: 가능/부분가능/어려움
-  - 가능: 크몽에 해당 카테고리 서비스가 있고 발주 방식도 명확
-  - 부분가능: 일부 sub-step은 발주 가능하나 브랜드 전달, 실시간 대응 등 제약
-  - 어려움: 크몽 서비스 특성상 이 task 자체를 발주하기 구조적으로 어려움
-- kmong_blockers: 크몽에서 이 task를 발주할 때 부딪히는 구체적 걸림돌 2~3가지
-  (예: "크몽 콘텐츠 제작 서비스는 단발성 결과물 기준 — 지속 운영형 task는 별도 계약 필요",
-       "브랜드 계정 로그인 권한 공유 시 보안 리스크",
-       "크몽 셀러 대부분 성과 보장 아닌 납품 보장 — ROAS 책임 불가")
-- kmong_approach: 크몽을 실제로 활용한다면 어떻게 발주하는지 (검색 키워드, 서비스 카테고리, 발주 형태, 예상 단가)
+[3] easy_step_indices
+action_steps 중 외주 대체가 가장 쉬운 step들의 0-based 인덱스 목록.
+쉬운 기준:
+- 공개 데이터·무료 도구만으로 가능 (구글 트렌드, 네이버 데이터랩, 인스타그램 탐색 등)
+- 결과물이 파일·문서·리스트 형태로 납품 가능
+- 브랜드 내부 정보 없이도 수행 가능
+- 반복·패턴화된 작업 (규격 맞추기, 포맷 통일, 데이터 취합)
 
-[4] proposal_headline
-"당신 회사가 [트리거 상황]이라면, [이 task]는 [이유]로 외주가 합리적입니다" 형태의 1줄 제안"""
+[4] triggers
+이 task를 외주로 전환하게 되는 실제 트리거 상황 (해당하는 것만 선택, 전부 해당하는 경우는 거의 없음):
+- 채용공백: 이 포지션이 비어 있을 때 단기 커버 필요
+- 고정비: 이 task 전담 인력을 뽑기보다 건당 변동비가 합리적인 경우
+- 피크: 시즌·신제품 런칭 때만 물량이 급증하는 task
+- 스킬부족: 팀 내 해당 스킬 보유자가 없어서 외부 조달이 불가피한 경우
+
+[5] kmong_coverage — 엄격한 기준 적용
+크몽(kmong.com)에서 이 task 전체를 실제로 발주할 수 있는지 평가.
+반드시 아래 기준을 적용하고 관대하게 평가하지 말 것:
+
+▶ 가능 (진짜 가능한 경우만)
+  - 브랜드 내부 시스템·계정 접근이 전혀 불필요
+  - 결과물이 문서·파일·리스트로 납품 가능
+  - 크몽에 해당 서비스 카테고리가 실제로 활성화되어 있음
+  - 단발 또는 정기 계약으로 발주 구조가 자연스러움
+
+▶ 부분가능 (일부만 가능, 과반은 내부 처리 필요)
+  - 핵심 step 중 일부는 내부 처리 필요하지만
+  - 준비·리서치·초안 작성 등 보조적 sub-step은 외주 가능
+  - "이 task의 일부를 크몽으로 덜 수 있다"는 수준
+
+▶ 어려움 (구조적으로 크몽 발주 불가)
+  - ERP, 내부 시스템, 브랜드 계정 로그인이 핵심 step에 포함
+  - 실시간 모니터링·즉시 대응이 task의 핵심
+  - 내부 데이터(매출, CRM, 재고) 없이는 아무것도 못 하는 task
+  - 결과물이 납품 가능한 형태가 아닌 상시 운영형 task
+
+※ 주의: "계정 공유 이슈가 있지만 일부는 가능"이면 '부분가능'이 아니라 task 성격에 따라 '어려움' 판단.
+   광고 계정 직접 운용이 핵심인 task(광고 집행, CRM 캠페인 집행 등)는 계정 접근 없이 불가 → '어려움'.
+
+- kmong_blockers: 2~3가지 구체적 걸림돌
+- kmong_approach: 가능/부분가능인 경우 실제 발주 방법. 어려움인 경우 "크몽 대신 활용 가능한 대안 채널" 제시
+
+[6] agency_overlap
+뷰티 브랜드가 이 task 영역에 이미 에이전시를 쓰고 있을 가능성이 높은지 (true/false).
+해당 영역: 광고 집행·매체 운영, 이커머스 채널 운영, 인플루언서 마케팅, 콘텐츠 제작 등.
+
+[7] agency_differentiation
+agency_overlap=true 인 경우:
+"이미 에이전시를 쓰고 있다면, 크몽/전문 프리랜서로 대체하거나 병행할 때의 차별화 포인트"
+- 기존 에이전시의 전형적 한계 (리테이너 비용, 담당자 교체, 브랜드 이해 부족)
+- 크몽/프리랜서가 유리한 지점 (단가, 속도, 전문성, 브랜드 온보딩 용이성)
+- 에이전시 계약 안에서 이 task만 분리 발주하는 방법
+agency_overlap=false 인 경우: 빈 문자열 ""
+
+[8] proposal_headline
+"[상황]이라면 [task]는 [이유]로 외주가 합리적입니다" 형태 1줄"""
 
 USER_TEMPLATE = """카테고리: {category}
 Task명: {task}
@@ -133,7 +181,7 @@ def _call_llm(task_row: dict) -> TaskProposal:
     )
     resp = _get_client().beta.chat.completions.parse(
         model=MODEL,
-        max_tokens=1200,
+        max_tokens=1500,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user",   "content": user_msg},
@@ -143,6 +191,10 @@ def _call_llm(task_row: dict) -> TaskProposal:
     parsed = resp.choices[0].message.parsed
     if parsed is None:
         raise ValueError(f"parse 실패: {task_row['task명']}")
+    # 인덱스 범위 클램프
+    n = len(parsed.action_steps)
+    parsed.hard_step_indices = [i for i in parsed.hard_step_indices if 0 <= i < n]
+    parsed.easy_step_indices = [i for i in parsed.easy_step_indices if 0 <= i < n]
     return parsed
 
 
@@ -165,11 +217,10 @@ def _save_cache(cache: dict) -> None:
 
 DETAIL_COLUMNS = [
     "카테고리", "task명", "최종점수",
-    "action_steps",
+    "action_steps", "hard_step_indices", "easy_step_indices",
     "전환트리거",
-    "크몽_가능여부",
-    "크몽_걸림돌",
-    "크몽_활용방안",
+    "크몽_가능여부", "크몽_걸림돌", "크몽_활용방안",
+    "agency_overlap", "agency_differentiation",
     "제안_헤드라인",
 ]
 
@@ -211,96 +262,35 @@ def _save_trigger_map(detail_rows: list[dict]) -> None:
 # ── 제안 문서 생성 ────────────────────────────────────────────────────────────
 
 def _build_proposal_md(detail_rows: list[dict]) -> str:
-    lines = []
-    lines.append("# 뷰티 마케팅 외주화 실전 제안서")
-    lines.append("")
-    lines.append("> 249개 뷰티 마케팅 채용공고 분석 + 3인 페르소나 토론 기반  ")
-    lines.append("> 최종 외주 적합도 +3 이상 task 23개 대상")
-    lines.append("")
+    lines = ["# 뷰티 마케팅 외주화 실전 제안서", "",
+             "> 249개 뷰티 마케팅 채용공고 분석 + 3인 페르소나 토론 기반  ",
+             "> 최종 외주 적합도 +3 이상 task 23개 대상", ""]
 
-    # 트리거별 섹션
-    trigger_order = ["채용공백", "고정비", "피크", "스킬부족"]
-    by_trigger: dict[str, list[dict]] = {t: [] for t in trigger_order}
-    for r in detail_rows:
-        for trig in [t.strip() for t in r["전환트리거"].split(",") if t.strip()]:
-            if trig in by_trigger:
-                by_trigger[trig].append(r)
-
-    trigger_intros = {
-        "채용공백": (
-            "마케터 채용에 3개월 이상 걸리고 있다면",
-            "공고 분석 결과 국내 뷰티 마케팅 포지션의 평균 채용 소요기간은 상당히 길며, "
-            "이 기간 동안 아래 task들은 프리랜서·에이전시로 즉시 커버 가능합니다."
-        ),
-        "고정비": (
-            "경력직 마케터 연봉이 부담이라면",
-            "경력 3-5년 마케터 연봉(4,000-6,000만원)을 고정비로 쓰는 대신, "
-            "아래 task들을 건당 변동비로 전환하면 실질 비용을 낮출 수 있습니다."
-        ),
-        "피크": (
-            "시즌·캠페인 물량이 몰릴 때 내부 인력이 부족하다면",
-            "신제품 런칭, 시즌 프로모션 등 피크 시기에 내부 인력만으로는 커버가 어렵습니다. "
-            "아래 task들은 캠페인 단위 계약으로 탄력적 확장이 가능합니다."
-        ),
-        "스킬부족": (
-            "팀 내에 없는 전문 스킬이 필요하다면",
-            "글로벌 인플루언서 협상, 퍼포먼스 최적화 등 특정 전문성은 채용보다 "
-            "외부 조달이 현실적입니다."
-        ),
-    }
-
-    for trig in trigger_order:
-        rows = by_trigger[trig]
-        if not rows:
-            continue
-        title, intro = trigger_intros[trig]
-        lines.append(f"---")
-        lines.append("")
-        lines.append(f"## {TRIGGER_LABELS[trig]}")
-        lines.append(f"### {title}")
-        lines.append("")
-        lines.append(intro)
-        lines.append("")
-
-        for r in sorted(rows, key=lambda x: -int(x["최종점수"])):
-            score = int(r["최종점수"])
-            kmong = r["크몽_가능여부"]
-            kmong_mark = {"가능": "✅", "부분가능": "⚠️", "어려움": "❌"}.get(kmong, "")
-            lines.append(f"#### [{score:+d}] {r['카테고리']} | {r['task명']}")
-            lines.append("")
-            lines.append(f"**제안:** {r['제안_헤드라인']}")
-            lines.append("")
-
-            # 실무 action
-            lines.append("**실무에서 실제로 하는 일:**")
-            for step in r["action_steps"].split(" | "):
-                lines.append(f"- {step.strip()}")
-            lines.append("")
-
-            # 크몽
-            lines.append(f"**크몽 활용 가능성: {kmong_mark} {kmong}**")
-            if r["크몽_걸림돌"]:
-                lines.append("")
-                lines.append("걸림돌:")
-                for blocker in r["크몽_걸림돌"].split(" | "):
-                    lines.append(f"- {blocker.strip()}")
-            lines.append("")
-            lines.append(f"활용 방안: {r['크몽_활용방안']}")
-            lines.append("")
-
-    # 크몽 가능 여부 요약 테이블
-    lines.append("---")
-    lines.append("")
-    lines.append("## 크몽 활용 가능 여부 요약")
-    lines.append("")
-    lines.append("| 가능 여부 | task 수 | 대표 task |")
-    lines.append("|---|---|---|")
     for coverage, label in [("가능", "✅ 가능"), ("부분가능", "⚠️ 부분가능"), ("어려움", "❌ 어려움")]:
         matched = [r for r in detail_rows if r["크몽_가능여부"] == coverage]
-        examples = ", ".join(r["task명"] for r in matched[:2])
-        lines.append(f"| {label} | {len(matched)}개 | {examples} |")
-    lines.append("")
-
+        if not matched:
+            continue
+        lines += [f"---", "", f"## 크몽 {label} ({len(matched)}개)", ""]
+        for r in sorted(matched, key=lambda x: -int(x["최종점수"])):
+            score = int(r["최종점수"])
+            sign = f"+{score}" if score > 0 else str(score)
+            lines += [f"### [{sign}] {r['카테고리']} | {r['task명']}", "",
+                      f"**제안:** {r['제안_헤드라인']}", ""]
+            steps = r["action_steps"].split(" | ")
+            hard_idx = set(int(i) for i in r["hard_step_indices"].split(",") if i.strip().lstrip("-").isdigit())
+            easy_idx = set(int(i) for i in r["easy_step_indices"].split(",") if i.strip().lstrip("-").isdigit())
+            lines.append("**실무 action (🔴=외주 걸림돌, 🟢=외주 쉬운 step):**")
+            for idx, step in enumerate(steps):
+                prefix = "🔴 " if idx in hard_idx else ("🟢 " if idx in easy_idx else "   ")
+                lines.append(f"- {prefix}{step.strip()}")
+            lines.append("")
+            lines.append(f"**크몽 걸림돌:**")
+            for b in r["크몽_걸림돌"].split(" | "):
+                lines.append(f"- {b.strip()}")
+            lines += ["", f"**활용 방안:** {r['크몽_활용방안']}", ""]
+            if r.get("agency_overlap") == "True":
+                lines += ["**⚡ 에이전시 이미 사용 중인 경우:**",
+                          r.get("agency_differentiation", ""), ""]
     return "\n".join(lines)
 
 
@@ -314,7 +304,6 @@ def run(force: bool = False) -> None:
     with INPUT_CSV.open(encoding="utf-8-sig") as f:
         all_tasks = list(csv.DictReader(f))
 
-    # step2b_tasks.csv에서 발주단위설명 로드
     unit_map: dict[tuple[str, str], str] = {}
     step2b_path = Path("output/step2b_tasks.csv")
     if step2b_path.exists():
@@ -329,58 +318,54 @@ def run(force: bool = False) -> None:
     detail_rows: list[dict] = []
 
     for i, task_row in enumerate(target, 1):
-        cache_key = f"{task_row['카테고리']}::{task_row['task명']}"
-        task_row["발주단위설명"] = unit_map.get(
-            (task_row["카테고리"], task_row["task명"]), ""
-        )
+        cache_key = f"v2::{task_row['카테고리']}::{task_row['task명']}"
+        task_row["발주단위설명"] = unit_map.get((task_row["카테고리"], task_row["task명"]), "")
 
         if cache_key in cache and not force:
             p = TaskProposal(**cache[cache_key])
             print(f"[step4] ({i:02d}/{len(target)}) 캐시: {task_row['task명']}")
         else:
-            print(f"[step4] ({i:02d}/{len(target)}) 분석 중: [{int(task_row['최종점수']):+d}] {task_row['카테고리']} | {task_row['task명']}", end=" ... ", flush=True)
+            print(f"[step4] ({i:02d}/{len(target)}) [{int(task_row['최종점수']):+d}] {task_row['카테고리']} | {task_row['task명']}", end=" ... ", flush=True)
             p = _call_llm(task_row)
             cache[cache_key] = p.model_dump()
             _save_cache(cache)
             print("완료")
 
         detail_rows.append({
-            "카테고리":     task_row["카테고리"],
-            "task명":       task_row["task명"],
-            "최종점수":     task_row["최종점수"],
-            "action_steps": " | ".join(p.action_steps),
-            "전환트리거":   ", ".join(p.triggers),
-            "크몽_가능여부": p.kmong_coverage,
-            "크몽_걸림돌":  " | ".join(p.kmong_blockers),
-            "크몽_활용방안": p.kmong_approach,
-            "제안_헤드라인": p.proposal_headline,
+            "카테고리":              task_row["카테고리"],
+            "task명":                task_row["task명"],
+            "최종점수":              task_row["최종점수"],
+            "action_steps":          " | ".join(p.action_steps),
+            "hard_step_indices":     ", ".join(str(i) for i in p.hard_step_indices),
+            "easy_step_indices":     ", ".join(str(i) for i in p.easy_step_indices),
+            "전환트리거":            ", ".join(p.triggers),
+            "크몽_가능여부":         p.kmong_coverage,
+            "크몽_걸림돌":           " | ".join(p.kmong_blockers),
+            "크몽_활용방안":         p.kmong_approach,
+            "agency_overlap":        str(p.agency_overlap),
+            "agency_differentiation": p.agency_differentiation,
+            "제안_헤드라인":         p.proposal_headline,
         })
 
     _save_detail(detail_rows)
     _save_trigger_map(detail_rows)
-
-    proposal_md = _build_proposal_md(detail_rows)
     OUTPUT_PROPOSAL.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PROPOSAL.write_text(proposal_md, encoding="utf-8")
+    OUTPUT_PROPOSAL.write_text(_build_proposal_md(detail_rows), encoding="utf-8")
 
-    # 요약 출력
     print("\n" + "=" * 65)
-    print("Step 4 완료 — 외주 제안 항목 확정 + 전환 트리거 매핑")
+    print("Step 4 완료")
     print("=" * 65)
 
-    coverage_counts = {"가능": 0, "부분가능": 0, "어려움": 0}
+    coverage_counts: dict[str, int] = {"가능": 0, "부분가능": 0, "어려움": 0}
     for r in detail_rows:
-        coverage_counts[r["크몽_가능여부"]] += 1
-
-    print(f"\n크몽 활용 가능 여부:")
+        coverage_counts[r["크몽_가능여부"]] = coverage_counts.get(r["크몽_가능여부"], 0) + 1
     marks = {"가능": "✅", "부분가능": "⚠️", "어려움": "❌"}
+    print("\n크몽 활용 가능 여부:")
     for k, v in coverage_counts.items():
         print(f"  {marks[k]} {k}: {v}개")
 
-    print(f"\n전환 트리거별 해당 task 수:")
-    for trig, label in TRIGGER_LABELS.items():
-        count = sum(1 for r in detail_rows if trig in r["전환트리거"])
-        print(f"  {label}: {count}개")
+    agency_count = sum(1 for r in detail_rows if r["agency_overlap"] == "True")
+    print(f"\n에이전시 이미 사용 중일 가능성 있는 task: {agency_count}개")
 
     print(f"\n[output] {OUTPUT_DETAIL}")
     print(f"[output] {OUTPUT_TRIGGERS}")
@@ -390,6 +375,6 @@ def run(force: bool = False) -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
     parser = argparse.ArgumentParser()
-    parser.add_argument("--force", action="store_true", help="캐시 무시 재실행")
+    parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
     run(force=args.force)

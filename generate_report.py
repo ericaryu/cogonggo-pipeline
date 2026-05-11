@@ -399,12 +399,20 @@ def section_step3():
 </section>"""
 
 
+def _parse_indices(raw: str) -> set[int]:
+    result = set()
+    for tok in raw.split(","):
+        tok = tok.strip()
+        if tok.lstrip("-").isdigit():
+            result.add(int(tok))
+    return result
+
+
 def section_step4():
     by_kmong = defaultdict(list)
     for r in detail4:
         by_kmong[r["크몽_가능여부"]].append(r)
 
-    # 트리거별 그룹화
     trigger_order = ["채용공백", "고정비", "피크", "스킬부족"]
     by_trigger = defaultdict(list)
     for r in detail4:
@@ -416,7 +424,7 @@ def section_step4():
     kmong_bar_html = ""
     for k, color in [("가능", "#27ae60"), ("부분가능", "#f39c12"), ("어려움", "#e74c3c")]:
         cnt = len(by_kmong[k])
-        pct = round(cnt / total4 * 100)
+        pct = round(cnt / total4 * 100) if total4 else 0
         kmong_bar_html += f"""
         <div class="kb-item">
           <span class="kb-icon">{KMONG_ICON[k]}</span>
@@ -426,6 +434,13 @@ def section_step4():
           </div>
           <span class="kb-count">{cnt}개</span>
         </div>"""
+
+    # 하이라이트 범례
+    legend_html = """
+    <div class="step-legend">
+      <span class="legend-item hard">🔴 외주 시 가장 큰 걸림돌 (ERP·계정 접근·실시간 판단)</span>
+      <span class="legend-item easy">🟢 외주 대체가 가장 쉬운 step (납품형·공개 데이터·반복 작업)</span>
+    </div>"""
 
     # task 카드
     task_cards_html = ""
@@ -440,10 +455,19 @@ def section_step4():
         ki = KMONG_ICON[kmong]
         kc = {"가능": "#27ae60", "부분가능": "#f39c12", "어려움": "#e74c3c"}[kmong]
 
-        steps_html = "".join(
-            f"<li>{s.strip()}</li>"
-            for s in r["action_steps"].split(" | ") if s.strip()
-        )
+        # action steps with highlight
+        steps = [s.strip() for s in r["action_steps"].split(" | ") if s.strip()]
+        hard_idx = _parse_indices(r.get("hard_step_indices", ""))
+        easy_idx = _parse_indices(r.get("easy_step_indices", ""))
+        steps_html = ""
+        for idx, step in enumerate(steps):
+            if idx in hard_idx:
+                steps_html += f'<li class="step-hard">{step}</li>'
+            elif idx in easy_idx:
+                steps_html += f'<li class="step-easy">{step}</li>'
+            else:
+                steps_html += f"<li>{step}</li>"
+
         blockers_html = "".join(
             f"<li>{b.strip()}</li>"
             for b in r["크몽_걸림돌"].split(" | ") if b.strip()
@@ -452,6 +476,15 @@ def section_step4():
         trig_html = "".join(
             f'<span class="trig-pill">{TRIGGER_LABEL.get(t, t)}</span>' for t in trigs
         )
+
+        # 에이전시 differentiation 박스
+        agency_html = ""
+        if r.get("agency_overlap") == "True" and r.get("agency_differentiation"):
+            agency_html = f"""
+            <div class="agency-box">
+              <div class="agency-title">⚡ 이미 에이전시를 쓰고 있다면</div>
+              <p class="agency-body">{r['agency_differentiation']}</p>
+            </div>"""
 
         task_cards_html += f"""
         <div class="proposal-card">
@@ -476,6 +509,7 @@ def section_step4():
               <ul class="blocker-list">{blockers_html}</ul>
               <div class="pc-col-sub" style="margin-top:.6rem">활용 방안</div>
               <p class="kmong-approach">{r['크몽_활용방안']}</p>
+              {agency_html}
             </div>
           </div>
         </div>"""
@@ -486,14 +520,16 @@ def section_step4():
     <div class="step-header">
       <span class="step-num">Step 4</span>
       <h2>외주 제안 확정 + 전환 트리거 매핑</h2>
-      <p>최종점수 ≥ +3인 23개 task 대상 · 실무 action 상세화 · 크몽 발주 가능성 평가</p>
+      <p>최종점수 ≥ +3인 23개 task · 크몽 발주 가능성 엄격 재평가 · 에이전시 기존 사용 맥락 포함</p>
     </div>
 
     <div class="kmong-summary">
-      <h3 class="sub-title">크몽(kmong.com) 활용 가능 여부</h3>
-      <p class="kmong-desc">국내 최대 프리랜서 플랫폼 크몽에서 실제 발주 가능한지 task별 평가</p>
+      <h3 class="sub-title">크몽(kmong.com) 활용 가능 여부 — 엄격 기준 재평가</h3>
+      <p class="kmong-desc">ERP·광고 계정·CRM DB 접근이 핵심인 task는 <strong>어려움</strong>으로 분류. 구조적으로 크몽 발주가 불가한 task는 대안 채널을 제시합니다.</p>
       <div class="kb-wrap">{kmong_bar_html}</div>
     </div>
+
+    {legend_html}
 
     <div class="trigger-summary">
       <h3 class="sub-title">전환 트리거별 해당 task 수</h3>
@@ -691,11 +727,24 @@ body {
 .pc-col:first-child { border-right: 1px solid #f0f0f0; }
 .pc-col-title { font-weight: 700; font-size: 12px; color: #333; margin-bottom: .7rem; text-transform: uppercase; letter-spacing: .05em; }
 .pc-col-sub { font-size: 11px; font-weight: 700; color: #999; margin-bottom: .35rem; text-transform: uppercase; }
-.action-list { padding-left: 1.2rem; }
-.action-list li { font-size: 12px; color: #444; padding: .25rem 0; line-height: 1.6; }
+.action-list { padding-left: 0; list-style: none; }
+.action-list li { font-size: 12px; color: #444; padding: .3rem .6rem; line-height: 1.6; border-radius: 5px; margin-bottom: 2px; }
+.action-list li.step-hard { background: #fff0ee; color: #c0392b; border-left: 3px solid #e74c3c; padding-left: .6rem; font-weight: 600; }
+.action-list li.step-easy { background: #edfbf3; color: #1e8449; border-left: 3px solid #27ae60; padding-left: .6rem; }
 .blocker-list { padding-left: 1.1rem; }
 .blocker-list li { font-size: 12px; color: #555; padding: .2rem 0; line-height: 1.5; }
 .kmong-approach { font-size: 12px; color: #555; line-height: 1.7; }
+
+/* Step highlight legend */
+.step-legend { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0 1.5rem; }
+.legend-item { font-size: 12px; padding: .4rem .8rem; border-radius: 6px; font-weight: 600; }
+.legend-item.hard { background: #fff0ee; color: #c0392b; border-left: 3px solid #e74c3c; }
+.legend-item.easy { background: #edfbf3; color: #1e8449; border-left: 3px solid #27ae60; }
+
+/* Agency differentiation box */
+.agency-box { margin-top: 1rem; background: #fff8ec; border: 1px solid #f39c12; border-radius: 8px; padding: .8rem 1rem; }
+.agency-title { font-size: 12px; font-weight: 700; color: #e67e22; margin-bottom: .4rem; }
+.agency-body { font-size: 12px; color: #555; line-height: 1.7; }
 
 /* Subtitles */
 .sub-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: .8rem; }
