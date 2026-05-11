@@ -10,8 +10,10 @@ Usage:
     python pipeline.py --step analyze           # 4단계: Pass1 + Pass2 전체
     python pipeline.py --step analyze-pass1     # 4a단계: 공고 구조화 추출만
     python pipeline.py --step analyze-pass2     # 4b단계: 전략 분석만 (Pass1 캐시 필요)
+    python pipeline.py --step recruit-109       # /recruit/109 JD 수집 → output/recruit_109_jobs.csv
 
     python pipeline.py --step scrape-detail --limit 20     # 상세 테스트 (20건)
+    python pipeline.py --step recruit-109 --limit 10       # recruit-109 테스트 (10건)
     python pipeline.py --step analyze --category 마케팅    # 특정 카테고리만
     python pipeline.py --step analyze-pass1 --force        # 캐시 무시 재실행
 """
@@ -93,6 +95,13 @@ def run(
         run_pass2(category=category, force=force)
         print("\n분석 완료. 출력: output/\n")
 
+    if step == "recruit-109":
+        print("=" * 50)
+        print("STEP: /recruit/109 JD 수집 → output/recruit_109_jobs.csv")
+        print("=" * 50)
+        from scraper.recruit_109_scraper import run as recruit_109_run
+        asyncio.run(recruit_109_run(limit=limit, force=force))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="cogonggo.co 채용공고 분석 파이프라인")
@@ -101,6 +110,7 @@ if __name__ == "__main__":
         choices=[
             "scrape-list", "scrape-detail", "scrape",
             "classify", "analyze", "analyze-pass1", "analyze-pass2", "all",
+            "recruit-109",
         ],
         default="all",
         help="실행할 단계 (기본: all)",
