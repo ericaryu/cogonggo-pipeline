@@ -60,7 +60,7 @@ SKIP_FRAGMENTS = [
     ".css", ".js", ".png", ".jpg", ".svg", ".woff", "hotjar", "tally",
 ]
 OUTPUT_COLUMNS = [
-    "포지션명", "포지션 소개", "주요업무", "자격요건", "급여 및 처우", "우대사항", "publicId", "url",
+    "기업명", "포지션명", "포지션 소개", "주요업무", "자격요건", "급여 및 처우", "우대사항", "publicId", "url",
 ]
 
 
@@ -334,6 +334,7 @@ def _to_rows(jobs: list[dict]) -> list[dict]:
     for job in jobs:
         pid = job.get("publicId", "")
         rows.append({
+            "기업명": _clean(job.get("companyName", "")),
             "포지션명": _clean(job.get("title", "")),
             "포지션 소개": _clean(job.get("positionDescription", "")),
             "주요업무": _clean(job.get("mainTask", "")),
